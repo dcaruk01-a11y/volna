@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru" data-theme="mint">
+<html lang="ru" data-theme="mint" data-version="2">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -32,23 +32,23 @@
   </defs></svg>
   <div class="app">
     <header class="site-header">
-      <a href="./" class="wordmark" aria-label="Волна, главная"><svg><use href="#i-wave"/></svg>волна<span>POCKET SYNTH</span></a>
-      <div class="header-actions"><button class="quiet-button install-action"><svg><use href="#i-plus"/></svg><span>На главный экран</span></button><span class="header-divider"></span><button id="fullscreen" class="icon-button" aria-label="На весь экран" title="На весь экран"><svg><use href="#i-expand"/></svg></button><button class="icon-button menu-action" aria-label="Открыть настройки" title="Настройки"><svg><use href="#i-menu"/></svg></button></div>
+      <div class="wordmark" aria-label="Волна"><svg><use href="#i-wave"/></svg>волна<span>POCKET SYNTH</span></div>
+      <div class="header-actions"><button id="fullscreen" class="icon-button" aria-label="На весь экран" title="На весь экран"><svg><use href="#i-expand"/></svg></button></div>
     </header>
     <main>
       <div class="intro"><span class="eyebrow"><i></i> МАЛЕНЬКИЙ ИНСТРУМЕНТ. БОЛЬШЕ МУЗЫКИ.</span><p>Поймай свою волну.</p></div>
       <section class="instrument" aria-label="Музыкальный инструмент">
         <span class="screw screw-tl"></span><span class="screw screw-tr"></span><span class="screw screw-bl"></span><span class="screw screw-br"></span>
-        <div class="instrument-top"><div class="device-brand">волна<span>01</span></div><span class="device-caption">POLYPHONIC CHORD MACHINE</span><div class="power"><i id="power-led"></i><span id="power-label">READY</span></div><button class="device-menu menu-action" aria-label="Меню инструмента"><svg><use href="#i-menu"/></svg></button></div>
+        <div class="instrument-top"><div class="device-brand">волна<span>01</span></div><span class="device-caption">POLYPHONIC CHORD MACHINE</span><div class="power"><i id="power-led"></i><span id="power-label">READY</span></div><button class="device-menu menu-action" aria-label="Меню инструмента"><svg><use href="#i-menu"/></svg><span>Меню</span></button></div>
         <div class="instrument-body">
           <aside class="motion-module">
             <div class="speaker" aria-hidden="true"></div>
-            <div class="motion-title"><span>MOTION</span><span class="tiny-dot"></span><span>XY</span></div>
+            <div class="motion-title"><span>MOTION</span><span class="tiny-dot"></span><button id="echo" class="echo-button" aria-pressed="true" title="Включить или выключить эхо">ЭХО <i></i></button></div>
             <div class="joystick-area" id="joystick" role="slider" tabindex="0" aria-label="Джойстик эффектов, стрелки меняют звук" aria-valuemin="-100" aria-valuemax="100" aria-valuenow="0">
               <div class="joystick-ticks"></div><span class="axis axis-x"></span><span class="axis axis-y"></span><div class="joystick-knob" id="joystick-knob"><span></span></div>
-              <span class="direction direction-top">SPACE</span><span class="direction direction-bottom">TONE</span>
+              <span class="direction direction-top" id="joy-vertical">ПРОСТРАНСТВО</span><span class="direction direction-bottom" id="joy-horizontal">ЯРКОСТЬ</span>
             </div>
-            <div class="motion-hint">двигай, чтобы менять звук</div>
+            <div class="motion-hint" id="joy-readout">ЯРКОСТЬ / ПРОСТРАНСТВО</div>
           </aside>
           <div class="play-module">
             <div class="top-controls">
@@ -64,25 +64,44 @@
           <label class="volume-control"><svg><use href="#i-volume"/></svg><input type="range" min="0" max="100" value="65" id="volume" aria-label="Громкость"><span id="volume-value">65</span></label>
           <div class="bottom-divider"></div><div class="octave-control"><span class="control-label">OCT</span><button id="octave-down" aria-label="Октава ниже">−</button><output id="octave-value">0</output><button id="octave-up" aria-label="Октава выше">+</button></div>
           <div class="bottom-divider"></div><label class="key-control"><span class="control-label">KEY</span><select id="root-key" aria-label="Тональность"><option>C</option><option>C♯</option><option>D</option><option>E♭</option><option>E</option><option>F</option><option>F♯</option><option>G</option><option>A♭</option><option>A</option><option>B♭</option><option>B</option></select></label>
-          <label class="tempo-control"><span class="control-label">TEMPO</span><input type="number" id="tempo" min="40" max="200" value="84" aria-label="Темп"><span class="bpm">BPM</span></label><div class="device-serial">V—001 <span>✳</span></div>
+          <div class="tempo-control"><span class="control-label">TEMPO</span><button id="tempo-down" class="tempo-step" aria-label="Темп медленнее">−</button><button id="tempo" class="number-dial" role="spinbutton" aria-valuemin="40" aria-valuemax="200" aria-valuenow="84" aria-label="Темп. Потяни число или используй стрелки" title="Потяни число вбок или вверх">84</button><button id="tempo-up" class="tempo-step" aria-label="Темп быстрее">+</button><span class="bpm">BPM</span></div><div class="device-serial">V—001 <span>✳</span></div>
         </div>
+      <div id="count-in" class="count-in" role="status" aria-live="polite" hidden><span>ДО ЗАПИСИ</span><strong id="count-number">3</strong><small>REC — отменить</small></div>
       </section>
       <div class="preset-bar"><span class="preset-label">ВЫБЕРИ НАСТРОЕНИЕ</span><div class="preset-list" aria-label="Тембры"><button data-voice="tape" class="preset active" aria-pressed="true"><i class="preset-dot tape-dot"></i>Warm Tape<span>01</span></button><button data-voice="keys" class="preset" aria-pressed="false"><i class="preset-dot keys-dot"></i>Soft Keys<span>02</span></button><button data-voice="cloud" class="preset" aria-pressed="false"><i class="preset-dot cloud-dot"></i>Cloud Pad<span>03</span></button><button data-voice="bell" class="preset" aria-pressed="false"><i class="preset-dot bell-dot"></i>Moon Bell<span>04</span></button></div><button class="help-button" id="help"><svg><use href="#i-help"/></svg><span>Как играть</span></button></div>
       <div class="play-hint"><span class="hint-line"></span><span id="play-hint">Коснись клавиш. Остальное — по чувству.</span><span class="hint-line"></span></div>
     </main>
-    <footer><span>МУЗЫКА ВСЕГДА С ТОБОЙ</span><span class="desktop-hint">Клавиши <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd></span><button class="footer-theme menu-action">Сделай её своей <svg><use href="#i-arrow"/></svg></button></footer>
+    <footer><span>МУЗЫКА ВСЕГДА С ТОБОЙ</span><span class="desktop-hint">Клавиши <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd><kbd>H</kbd><kbd>J</kbd></span><span class="footer-note">ИГРАЙ ПО ЧУВСТВУ</span></footer>
   </div>
   <div class="portrait-tip" id="portrait-tip"><div class="rotate-phone">↻</div><span>Больше места для музыки</span><p>Поверни телефон горизонтально</p><button id="dismiss-portrait">Продолжить так</button></div>
   <dialog id="settings" class="settings-dialog"><div class="dialog-header"><div><span class="eyebrow">ТВОЙ ИНСТРУМЕНТ</span><h2>Настрой свою волну</h2></div><button class="icon-button close-settings" aria-label="Закрыть настройки"><svg><use href="#i-close"/></svg></button></div>
-    <nav class="settings-tabs" aria-label="Разделы настроек"><button data-tab="sound" class="selected">Звук</button><button data-tab="look">Вид</button><button data-tab="recordings">Записи <span id="recording-count">0</span></button><button data-tab="app">Приложение</button></nav>
+    <nav class="settings-tabs" aria-label="Разделы настроек"><button data-tab="sound" class="selected">Звук</button><button data-tab="look">Вид</button><button data-tab="recordings">Записи <span id="recording-count">0</span></button><button data-tab="app">Установка</button></nav>
     <div class="tab-panel" id="tab-sound">
-      <div class="setting-section"><h3>Характер звука</h3><div class="setting-row"><label for="scale">Лад</label><select id="scale"><option value="major">Мажор</option><option value="minor">Минор</option></select></div><div class="setting-row"><label for="reverb">Пространство</label><input id="reverb" type="range" min="0" max="100" value="30"><output id="reverb-value">30%</output></div><p class="setting-note">Джойстик: влево и вправо — яркость, вверх и вниз — пространство.</p></div>
+      <div class="setting-section"><h3>Характер звука</h3>
+        <div class="setting-row"><label for="scale">Лад</label><select id="scale"><option value="major">Мажор</option><option value="minor">Минор</option></select></div>
+        <div class="setting-row"><label for="tail">Шлейф после отпускания</label><input id="tail" type="range" min="0.2" max="4" step="0.1" value="1.8"><output id="tail-value">1.8 с</output></div>
+        <p class="setting-note">Чем длиннее шлейф, тем плавнее аккорды перетекают друг в друга. Его характер зависит от тембра.</p>
+        <div class="setting-row"><label for="reverb">Пространство</label><input id="reverb" type="range" min="0" max="100" value="40"><output id="reverb-value">40%</output></div>
+        <label class="setting-row"><span>Эхо · мягкие повторы</span><input type="checkbox" id="echo-enabled" checked class="switch"></label>
+        <div class="setting-row"><label for="echo-amount">Количество эха</label><input id="echo-amount" type="range" min="0" max="70" value="28"><output id="echo-value">28%</output></div>
+      </div>
+      <div class="setting-section"><h3>Джойстик</h3><div class="setting-row"><label for="joy-mode">Режим</label><select id="joy-mode"><option value="color">Цвет · яркость и пространство</option><option value="echo">Эхо · время и повторы</option><option value="motion">Движение · фильтр и пульсация</option></select></div><div class="setting-row"><label for="joy-sensitivity">Чувствительность</label><input id="joy-sensitivity" type="range" min="50" max="250" step="10" value="160"><output id="sensitivity-value">160%</output></div><p class="setting-note">Небольшое движение уже меняет звук. Больше чувствительность — раньше достигается полный эффект. Отпусти джойстик, чтобы вернуться к исходному звуку. В режиме «Эхо» включи кнопку ЭХО.</p></div>
       <div class="setting-section"><h3>Микрофон</h3><div class="setting-row"><div><strong id="mic-status">Выключен</strong><p>Добавь голос или окружающие звуки в запись.</p></div><button id="mic-toggle" class="small-button"><svg><use href="#i-mic"/></svg>Включить</button></div><label class="setting-row mic-gain-row" hidden>Уровень микрофона<input id="mic-gain" type="range" min="0" max="150" value="80"></label><p class="setting-note">Микрофон записывается вместе с инструментом. Его звук не выводится в динамики.</p></div>
       <div class="setting-section"><h3>Наушники и вывод звука</h3><div class="setting-row"><label for="audio-output">Устройство</label><select id="audio-output"><option value="default">Системное</option></select></div><p class="setting-note" id="output-note">Подключи наушники к телефону — звук переключится через систему. Bluetooth может добавлять задержку.</p><button id="refresh-devices" class="text-button">Обновить устройства</button></div>
     </div>
     <div class="tab-panel" id="tab-look" hidden><div class="setting-section"><h3>Цвет корпуса</h3><div class="themes"><button data-theme="mint" class="theme-choice selected"><i style="background:#c3d3c9"></i>Шалфей</button><button data-theme="sand" class="theme-choice"><i style="background:#d9c9ad"></i>Песок</button><button data-theme="lilac" class="theme-choice"><i style="background:#c8bdd9"></i>Лаванда</button><button data-theme="ink" class="theme-choice"><i style="background:#354442"></i>Графит</button></div></div><div class="setting-section"><h3>Ощущение игры</h3><label class="setting-row"><span>Вибрация клавиш</span><input type="checkbox" id="haptics" checked class="switch"></label><p class="setting-note">На устройствах, которые поддерживают вибрацию в браузере.</p></div></div>
-    <div class="tab-panel" id="tab-recordings" hidden><div class="recordings-intro"><h3>Твои маленькие сессии</h3><p>Нажми REC, сыграй и нажми ещё раз. Записи хранятся в этом браузере — скачай важные сессии.</p></div><div id="recordings-list"></div></div>
-    <div class="tab-panel" id="tab-app" hidden><div class="install-card"><img src="./icon.svg" alt="Иконка Волны"><div><h3>Волна всегда под рукой</h3><p>Установи как приложение — с отдельной иконкой и без адресной строки.</p></div></div><button class="primary-button install-action">Добавить на главный экран <svg><use href="#i-plus"/></svg></button><div class="setting-section"><h3>На iPhone</h3><p class="instruction">Открой сайт в Safari → «Поделиться» → «На экран “Домой”» → «Добавить». Затем запускай Волну с новой иконки.</p><h3>На Android</h3><p class="instruction">Нажми кнопку выше или открой меню браузера → «Установить приложение» / «Добавить на главный экран».</p><p class="setting-note">После первого открытия инструмент доступен офлайн. Поверни телефон горизонтально для удобной игры.</p></div><div class="setting-section"><h3>Как играть</h3><p class="instruction">Удерживай одну или несколько клавиш — это аккорды. HOLD оставит аккорд звучать после отпускания; повторное нажатие его выключит. ARP разбирает аккорд на отдельные ноты. Джойстик меняет характер звука. Перед сменой тембра или тональности звучащие клавиши отпускаются.</p><p class="setting-note">На компьютере: A–J или 1–7 — аккорды, пробел — HOLD, R — запись, Esc — отпустить все клавиши.</p></div></div>
+    <div class="tab-panel" id="tab-recordings" hidden><div class="recordings-intro"><h3>Твои маленькие сессии</h3><p>Нажми REC, дождись 3 → 2 → 1, сыграй и нажми ещё раз. Записи хранятся в этом браузере — скачай важные сессии.</p></div><div id="recordings-list"></div></div>
+    <div class="tab-panel" id="tab-app" hidden><div class="install-card"><img src="./icon.svg" alt="Иконка Волны"><div><h3>Волна всегда под рукой</h3><p>Установи как приложение — с отдельной иконкой и без адресной строки.</p></div></div><button class="primary-button install-action">Добавить на главный экран <svg><use href="#i-plus"/></svg></button><div class="setting-section instruction-card" id="installation-instructions" tabindex="-1"><h3>На iPhone</h3><p class="instruction">Открой сайт в Safari → «Поделиться» → «На экран “Домой”» → «Добавить». Затем запускай Волну с новой иконки.</p><h3>На Android</h3><p class="instruction">Нажми кнопку выше или открой меню браузера → «Установить приложение» / «Добавить на главный экран».</p><p class="setting-note">После первого открытия инструмент доступен офлайн. Поверни телефон горизонтально для удобной игры.</p></div><div class="setting-section"><h3>Как играть</h3><p class="instruction">Скользи по клавишам или играй несколькими пальцами. Все аккорды сочетаются в выбранном ладу. Шлейф и ЭХО плавно соединяют звучание. HOLD оставляет аккорд звучать; повторное нажатие выключает его. ARP играет ноты по очереди. Потяни число TEMPO, чтобы изменить скорость. Джойстик добавляет эффекты — его режим и чувствительность находятся в разделе «Звук».</p><button id="replay-tutorial" class="small-button">Пройти короткое знакомство</button><p class="setting-note">На компьютере: A–J или 1–7 — аккорды, пробел — HOLD, R — запись, Esc — отпустить все клавиши.</p></div></div>
+  </dialog>
+  <dialog id="welcome" class="welcome-dialog" aria-labelledby="lesson-title" aria-describedby="lesson-text">
+    <div class="lesson-top"><span class="eyebrow">ПЕРВАЯ ВОЛНА <span id="lesson-step">1 / 4</span></span><button id="lesson-skip" class="text-button">Пропустить</button></div>
+    <div class="lesson-layout"><div id="lesson-art" class="lesson-art" data-kind="keys" aria-hidden="true">
+      <div class="art-keys"><i></i><i></i><i></i><i></i><i></i><span>↝</span></div>
+      <div class="art-tail"><b>♪</b><b>♪</b><b>♪</b><b>♪</b></div>
+      <div class="art-joy"><span></span><i>↗</i></div>
+      <div class="art-record"><span>3</span><span>2</span><span>1</span><i></i></div>
+    </div><div class="lesson-copy"><h2 id="lesson-title"></h2><p id="lesson-text"></p></div></div>
+    <div class="lesson-footer"><div class="lesson-dots" aria-hidden="true"><i class="lesson-dot current"></i><i class="lesson-dot"></i><i class="lesson-dot"></i><i class="lesson-dot"></i></div><button id="lesson-back" class="small-button">Назад</button><button id="lesson-next" class="primary-button">Дальше</button></div>
   </dialog>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="./app.js" defer></script>
